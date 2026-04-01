@@ -1,8 +1,8 @@
-﻿using beckuper.Data;
-using beckuper.Models;
+﻿using backuper.Data;
+using backuper.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace beckuper.Repositories
+namespace backuper.Repositories
 {
     public class BackupRepository : ICRUDRepository<BackupRecord>
     {

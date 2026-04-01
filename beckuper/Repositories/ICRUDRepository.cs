@@ -1,4 +1,4 @@
-﻿namespace beckuper.Repositories
+﻿namespace backuper.Repositories
 {
     public interface ICRUDRepository<T>
     {

@@ -1,9 +1,9 @@
-﻿using beckuper.Models;
-using beckuper.Repositories;
-using beckuper.Services;
+﻿using backuper.Models;
+using backuper.Repositories;
+using backuper.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace beckuper.Controllers
+namespace backuper.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

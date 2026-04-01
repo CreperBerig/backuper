@@ -1,9 +1,9 @@
-﻿using beckuper.Models;
+﻿using backuper.Models;
 using Microsoft.Data.SqlClient;
 using MySqlConnector;
 using Npgsql;
 
-namespace beckuper.Services
+namespace backuper.Services
 {
     public class CheckConnectionService
     {

@@ -1,7 +1,7 @@
-﻿using beckuper.Models;
+﻿using backuper.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace beckuper.Data
+namespace backuper.Data
 {
     public class AppDbContext : DbContext
     {

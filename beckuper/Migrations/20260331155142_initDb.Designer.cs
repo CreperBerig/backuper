@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using beckuper.Data;
+using backuper.Data;
 
 #nullable disable
 
-namespace beckuper.Migrations
+namespace backuper.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20260331155142_initDb")]

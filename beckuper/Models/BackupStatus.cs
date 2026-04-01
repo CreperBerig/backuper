@@ -1,4 +1,4 @@
-﻿namespace beckuper.Models
+﻿namespace backuper.Models
 {
     public enum BackupStatus
     {

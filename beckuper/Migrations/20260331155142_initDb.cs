@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace beckuper.Migrations
+namespace backuper.Migrations
 {
     /// <inheritdoc />
     public partial class initDb : Migration

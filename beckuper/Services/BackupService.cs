@@ -1,8 +1,8 @@
-﻿using beckuper.Models;
+﻿using backuper.Models;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 
-namespace beckuper.Services
+namespace backuper.Services
 {
     public class BackupService
     {

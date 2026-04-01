@@ -1,7 +1,7 @@
-using beckuper.Data;
-using beckuper.Models;
-using beckuper.Repositories;
-using beckuper.Services;
+using backuper.Data;
+using backuper.Models;
+using backuper.Repositories;
+using backuper.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +13,7 @@ builder.Services.AddOpenApi();
 // Data
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseSqlite(
-        builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=/app/data/beckuper.db"
+        builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=/app/data/backuper.db"
     )
 );
 

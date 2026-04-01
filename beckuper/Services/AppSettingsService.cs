@@ -1,7 +1,7 @@
-﻿using beckuper.Models;
+﻿using backuper.Models;
 using System.Text.Json;
 
-namespace beckuper.Services
+namespace backuper.Services
 {
     public class AppSettingsService
     {
