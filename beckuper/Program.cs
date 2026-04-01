@@ -2,6 +2,7 @@ using backuper.Data;
 using backuper.Models;
 using backuper.Repositories;
 using backuper.Services;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
+// Hangfire
+builder.Services.AddHangfire(config => config.UseInMemoryStorage());
+builder.Services.AddHangfireServer();
+
 // Repositories
 builder.Services.AddScoped<ICRUDRepository<DatabaseConfig>, DatabaseRepository>();
 builder.Services.AddScoped<DatabaseRepository>();
@@ -26,6 +31,7 @@ builder.Services.AddScoped<BackupRepository>();
 // Services
 builder.Services.AddSingleton<BackupService>();
 builder.Services.AddSingleton<AppSettingsService>();
+builder.Services.AddSingleton<SchedulerService>();
 
 // Ports
 builder.WebHost.UseUrls(
@@ -34,11 +40,16 @@ builder.WebHost.UseUrls(
 
 var app = builder.Build();
 
+// Migrations
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.Migrate();
 }
+
+// Start scheduler
+var scheduler = app.Services.GetRequiredService<SchedulerService>();
+await scheduler.ScheduleAllAsync();
 
 if (app.Environment.IsDevelopment())
 {

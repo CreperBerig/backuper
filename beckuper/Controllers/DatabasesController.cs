@@ -12,15 +12,18 @@ namespace backuper.Controllers
         private readonly DatabaseRepository _repository;
         private readonly BackupRepository _backupRepository;
         private readonly BackupService _backupService;
+        private readonly SchedulerService _schedulerService;
 
         public DatabasesController(
-            DatabaseRepository repository
-            , BackupRepository backupRepository, 
-            BackupService backupService)
+            DatabaseRepository repository, 
+            BackupRepository backupRepository, 
+            BackupService backupService,
+            SchedulerService schedulerService)
         {
             _repository = repository;
             _backupRepository = backupRepository;
             _backupService = backupService;
+            _schedulerService = schedulerService;
         }
 
         [HttpGet]
