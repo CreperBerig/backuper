@@ -1,0 +1,6 @@
+@beckuper_HostAddress = http://localhost:5246
+
+GET {{beckuper_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
