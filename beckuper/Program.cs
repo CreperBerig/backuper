@@ -25,6 +25,7 @@ builder.Services.AddScoped<BackupRepository>();
 
 // Services
 builder.Services.AddSingleton<BackupService>();
+builder.Services.AddSingleton<AppSettingsService>();
 
 // Ports
 builder.WebHost.UseUrls(
