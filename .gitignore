@@ -10,7 +10,8 @@
 *.userosscache
 *.sln.docstates
 *.db
-*.db
+*.db-shm
+*.db-wal
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -374,3 +375,4 @@ FodyWeavers.xsd
 *.njsproj
 *.sln
 *.sw?
+.claude

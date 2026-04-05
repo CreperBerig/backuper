@@ -45,6 +45,7 @@ namespace backuper.Controllers
         public async Task<IActionResult> Create([FromBody] DatabaseConfig config)
         {
             var created = await _repository.Create(config);
+            _schedulerService.Schedule(created);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
@@ -53,6 +54,7 @@ namespace backuper.Controllers
         {
             var updated = await _repository.Update(id, config);
             if (updated is null) return NotFound();
+            _schedulerService.Schedule(updated);
             return Ok(updated);
         }
 
@@ -61,6 +63,8 @@ namespace backuper.Controllers
         {
             var config = await _repository.GetById(id);
             if (config is null) return NotFound();
+
+            _schedulerService.Unschedule(config);
 
             var backups = await _backupRepository.GetByDatabaseId(id);
 

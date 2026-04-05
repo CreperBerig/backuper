@@ -4,12 +4,27 @@ using backuper.Repositories;
 using backuper.Services;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Services
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+// CORS
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("DevCors", policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+    });
+}
 
 // Data
 builder.Services.AddDbContext<AppDbContext>(options => 
@@ -54,11 +69,17 @@ await scheduler.ScheduleAllAsync();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("DevCors");
 }
 
 // Web client
