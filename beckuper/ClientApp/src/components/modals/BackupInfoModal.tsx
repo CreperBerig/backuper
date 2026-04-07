@@ -122,7 +122,7 @@ export function BackupInfoModal({onClose, backup, updateBackupList}: Props) {
         {
           backup?.status === 1 ? (
             <>
-              <button className="btn accent" disabled={awaiting}>Download</button>
+              <button className="btn accent" disabled={awaiting} onClick={() => fetchBackups.downloadBackup(backup.id)}>Download</button>
               <button className="btn" disabled={awaiting}>Load</button>
             </>
           ) : null

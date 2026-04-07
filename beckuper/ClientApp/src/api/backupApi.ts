@@ -23,8 +23,17 @@ export const fetchBackups = {
     const response = await apiClient.get(`${BACKUPS_API_URL}/${id}/download`, {
       responseType: 'blob',
     });
+
     console.log('Download backup response:', response);
-    return response.data;
+    const url = window.URL.createObjectURL(response.data);
+    const a = document.createElement('a');
+    a.href = url;
+    
+    const disposition = response.headers['content-disposition'];
+    const fileName = disposition ? disposition.split('filename=')[1]?.replace(/"/g, '') : `backup_${id}.sql`;
+    a.download = fileName;
+    a.click();
+    return window.URL.revokeObjectURL(url);
   },
   delete: async (id: number) => {
     const response = await apiClient.delete(`${BACKUPS_API_URL}/${id}`);
