@@ -6,16 +6,18 @@ import { type DatabaseConfigMinimalResponse } from "../../models/response/databa
 import { fetchDatabaseConfig } from "../../api/databaseApi";
 import { AxiosError } from "axios";
 import { AddDatabaseConfigModal } from "../modals/AddDatabaseConfigModal";
+import { useLocation } from "react-router";
 
 export function MainSidebar() {
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [databases, setDatabases] = useState<DatabaseConfigMinimalResponse[]>([]);
+  const location = useLocation();
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [location.pathname === ROUTES.home])
 
   const fetchData = async () => {
     try {

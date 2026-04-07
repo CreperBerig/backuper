@@ -1,5 +1,7 @@
 import { Clock2Icon, InfoIcon, LoaderCircleIcon, XIcon } from "lucide-react";
 import type { BackupInfo } from "../../models/response/backupInfo"
+import { useState } from "react";
+import { fetchBackups } from "../../api/backupApi";
 
 interface Props {
   backup: BackupInfo | undefined;
@@ -7,7 +9,26 @@ interface Props {
   updateBackupList: () => void;
 }
 
-export function BackupInfoModal({onClose, backup}: Props) {
+export function BackupInfoModal({onClose, backup, updateBackupList}: Props) {
+  const [awaiting, setAwaiting] = useState<boolean>(false);
+
+  const deleteBackup = async () => {
+    try {
+      if(backup) {
+        setAwaiting(true);
+        const response = await fetchBackups.delete(backup?.id);
+        if(response) {
+          updateBackupList();
+          onClose();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setAwaiting(false);
+    }
+  }
+
   const backupStatus = (status: number) => {
     switch (status) {
       case 0:
@@ -97,12 +118,12 @@ export function BackupInfoModal({onClose, backup}: Props) {
         )
       }
       <div className="w-full flex gap-2 justify-center mt-2">
-        <button className="btn cancel">Delete</button>
+        <button className="btn cancel" disabled={awaiting} onClick={deleteBackup}>Delete</button>
         {
           backup?.status === 1 ? (
             <>
-              <button className="btn accent">Download</button>
-              <button className="btn">Load</button>
+              <button className="btn accent" disabled={awaiting}>Download</button>
+              <button className="btn" disabled={awaiting}>Load</button>
             </>
           ) : null
         }
