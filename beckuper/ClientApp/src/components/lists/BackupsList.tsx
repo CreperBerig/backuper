@@ -22,7 +22,7 @@ export function BackupsList({backups, updateBackups, isButtonDisabled}: Props) {
   }
 
   return (
-    <div className="rounded-xl outline outline-outline min-h-full">
+    <div className="rounded-xl outline outline-outline min-h-full container mx-auto">
       <div className="flex justify-between items-center border-b border-outline p-2">
         <p>{backups ? `backups: ${backups.length}` : "backups: 0"}</p>
         <button onClick={updateBackups} disabled={isButtonDisabled}><RotateCcwIcon /></button>

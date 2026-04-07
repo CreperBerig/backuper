@@ -376,3 +376,5 @@ FodyWeavers.xsd
 *.sln
 *.sw?
 .claude
+docker
+docker-compose.yml
