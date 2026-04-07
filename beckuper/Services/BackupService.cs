@@ -8,12 +8,14 @@ namespace backuper.Services
     {
         private readonly string _backupsRoot;
         private readonly string _saveRoot;
+        private readonly ILogger<BackupService> _logger;
 
-        public BackupService(IConfiguration config)
+        public BackupService(IConfiguration config, ILogger<BackupService> logger)
         {
             var volumeRoot = config["VolumePath"] ?? "/app";
             _backupsRoot = Path.Combine(volumeRoot, "backups");
             _saveRoot = Path.Combine(volumeRoot, "save");
+            _logger = logger;
         }
 
         #region Public methods
@@ -21,6 +23,7 @@ namespace backuper.Services
         {
             try
             {
+                _logger.LogDebug("Starting backup for {DatabaseName} at {Host}:{Port}", config.DatabaseName, config.Host, config.Port);
                 var filePath = config.Type switch
                 {
                     DatabasesType.PostgresSQL => await BackupPostgres(config),
@@ -30,9 +33,11 @@ namespace backuper.Services
                     _ => throw new NotSupportedException($"Type {config.Type} is not support")
                 };
 
+                _logger.LogDebug("Backup result {filePath}", filePath);
                 return (true, filePath, null);
             } catch (Exception ex)
             {
+                _logger.LogError(ex, "Backup failed for {DatabaseName} at {Host}:{Port}", config.DatabaseName, config.Host, config.Port);
                 return (false, string.Empty, ex.Message);
             }
         }
@@ -66,6 +71,7 @@ namespace backuper.Services
         #region Backups logic
         private async Task<string> BackupPostgres(DatabaseConfig config)
         {
+            _logger.LogDebug("Start PostgreSQL backup for {DatabaseName} at {Host}:{Port}", config.DatabaseName, config.Host, config.Port);
             var filePath = GetBackupFilePath(config);
             var process = new Process
             {
@@ -80,6 +86,7 @@ namespace backuper.Services
                 }
             };
 
+            _logger.LogDebug("Running pg_dump");
             await RunProcess(process);
             return filePath;
         }

@@ -1,4 +1,4 @@
-﻿namespace backuper.Models
+﻿ namespace backuper.Models
 {
     public class DatabaseConfig
     {
@@ -15,5 +15,10 @@
         public string CronSchedule { get; set; } = "0 2 * * *"; // Default to daily at 2:00 AM
 
         public List<BackupRecord> Backups { get; set; } = [];
+
+        public override string ToString()
+        {
+            return $"ID: {Id}, Name: {Name}, Type: {Type}, Host: {Host}, Port: {Port}, DatabaseName: {DatabaseName}, Username: {Username}";
+        }
     }
 }

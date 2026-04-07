@@ -3,6 +3,9 @@ import { type AppSettingsResponse } from "../../models/response/appSetings"
 import { fetchAppSettings } from "../../api/appSettingsApi";
 import { SettingTile } from "../../components/tiles/SettingTile";
 import { useSettingsFooter } from "../../contexts/SettingsFooterContext";
+import { SettingsSuspenseView } from "../../components/suspenses/SettingsSuspenseView";
+import { SettingsErrorView } from "../../components/errors/SettingsErrorView";
+import type { AxiosError } from "axios";
 
 export function AppSettingsPage() {
   const { setFooter } = useSettingsFooter();
@@ -12,8 +15,8 @@ export function AppSettingsPage() {
   const [retryCount, setRetryCount] = useState<number>();
   const [retryDelayMinutes, setRetryDelayMinutes] = useState<number>();
 
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<AxiosError>();
 
   const [isSubmiting, setSubmitting] = useState<boolean>(false);
   const [isFulled, setIsFulled] = useState<boolean>(false);
@@ -21,17 +24,19 @@ export function AppSettingsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         var response = await fetchAppSettings.get()
         setSettings(response);
       } catch (error) {
         console.log(error)
-        setError((error as Error).message);
+        setError((error as AxiosError));
       } finally {
         setLoading(false);
       }
     }
 
     fetchData()
+    document.title = 'Backuper | Retry settings';
   }, [])
 
   useEffect(() => {
@@ -86,22 +91,26 @@ export function AppSettingsPage() {
       }
     } catch (error) {
       console.log(error);
-      setError((error as Error).message);
+      setError((error as AxiosError));
     } finally {
       setSubmitting(false);
     }
   }
 
-  if(isLoading) {
-    return <div>Loading...</div>
+  if (isLoading) {
+    return <SettingsSuspenseView />
   }
 
   if(error) {
-    return <div>Error: {error}</div>
+    return <SettingsErrorView title={error.code} description="Failed to load retry backup settings" reason={error.message}/>
   }
 
   return (
     <div className="space-y-2">
+      <div className="mb-4">
+        <p className="text-xl font-semibold">Backup retry settings</p>
+        <p className="text-text-description">This settings for configuration retry backup if it was canceled due to an error</p>
+      </div>
       <SettingTile title="Retry count" description="The number of attempts to make a backup again if it was canceled due to an error">
         <input 
           type="number"

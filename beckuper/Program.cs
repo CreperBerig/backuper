@@ -3,6 +3,7 @@ using backuper.Models;
 using backuper.Repositories;
 using backuper.Services;
 using Hangfire;
+using Hangfire.Storage.SQLite;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -34,7 +35,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 // Hangfire
-builder.Services.AddHangfire(config => config.UseInMemoryStorage());
+builder.Services.AddHangfire(config => config.UseSQLiteStorage(
+    builder.Configuration.GetConnectionString("Hangfire") ?? "/app/data/hangfire.db"
+));
 builder.Services.AddHangfireServer();
 
 // Repositories
@@ -55,16 +58,26 @@ builder.WebHost.UseUrls(
 
 var app = builder.Build();
 
-// Migrations
+// Migrations + cleanup stale InProgress backups
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.Migrate();
+
+    await dbContext.Backups
+        .Where(b => b.Status == BackupStatus.InProgress)
+        .ExecuteUpdateAsync(s => s
+            .SetProperty(b => b.Status, BackupStatus.Failed)
+            .SetProperty(b => b.ErrorMessage, "Interrupted by application restart"));
 }
 
-// Start scheduler
-var scheduler = app.Services.GetRequiredService<SchedulerService>();
-await scheduler.ScheduleAllAsync();
+// Start scheduler after Hangfire server is ready
+var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
+lifetime.ApplicationStarted.Register(() =>
+{
+    var scheduler = app.Services.GetRequiredService<SchedulerService>();
+    scheduler.ScheduleAllAsync().GetAwaiter().GetResult();
+});
 
 if (app.Environment.IsDevelopment())
 {

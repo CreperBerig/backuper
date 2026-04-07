@@ -14,16 +14,20 @@ namespace backuper.Controllers
         private readonly BackupService _backupService;
         private readonly SchedulerService _schedulerService;
 
+        private readonly ILogger<DatabasesController> _logger;
+
         public DatabasesController(
             DatabaseRepository repository, 
             BackupRepository backupRepository, 
             BackupService backupService,
-            SchedulerService schedulerService)
+            SchedulerService schedulerService,
+            ILogger<DatabasesController> logger)
         {
             _repository = repository;
             _backupRepository = backupRepository;
             _backupService = backupService;
             _schedulerService = schedulerService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -33,12 +37,21 @@ namespace backuper.Controllers
             return Ok(configs);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("by-id/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var config = await _repository.GetById(id);
             if (config is null) return NotFound();
             return Ok(config);
+        }
+
+        [HttpGet("minimal")]
+        public async Task<IActionResult> GetAllMinimal()
+        {
+            var configs = await _repository.GetAll();
+            var minimalConfigs = configs.Select(c => new { c.Id, c.Name }).ToList();
+            _logger.LogInformation("Retrieved minimal database configs: {Configs}", minimalConfigs);
+            return Ok(minimalConfigs);
         }
 
         [HttpPost]
@@ -96,7 +109,9 @@ namespace backuper.Controllers
         [HttpPost("test")]
         public async Task<IActionResult> TestConnection([FromBody] DatabaseConfig config)
         {
+            _logger.LogInformation("Testing connection for config: {Config}", config.ToString());
             var result = await CheckConnection(config);
+            _logger.LogInformation("Connection test result: {Result}", result);
             return Ok(result);
         }
 
@@ -122,8 +137,9 @@ namespace backuper.Controllers
                         return false;
                 }
             }
-            catch
+            catch (Exception ex) 
             {
+                _logger.LogError(ex, "Error testing connection for config: {Error}", ex.Message);
                 return false;
             }
         }

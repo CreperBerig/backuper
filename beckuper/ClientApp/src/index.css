@@ -20,7 +20,7 @@
   --bg-disabled: #CACFD9;
 
   --text-primary: #010101;
-  --text-description: #10141C;
+  --text-description: #7A8499;
   --text-on-accent: #FFFFFF;
 
   --accent: #2563EB;
@@ -37,7 +37,7 @@
   --bg-disabled: #3D4659;
 
   --text-primary: #FFFFFF;
-  --text-description: #D7DBE3;
+  --text-description: #606B80;
   --text-on-accent: #FFFFFF;
 
   --accent: #3B82F6;
@@ -65,21 +65,29 @@ html, body, #root{
 
 .btn {
   cursor: pointer;
-  @apply px-3 py-1 bg-bg-secondary text-text-primary rounded disabled:bg-bg-disabled disabled:text-text-description
+  @apply px-3 py-1 bg-bg-secondary outline outline-outline text-text-primary rounded disabled:bg-bg-disabled disabled:text-text-description
 }
 .btn:disabled {
   cursor: not-allowed;
-  @apply bg-bg-disabled text-text-description
+  @apply bg-bg-disabled text-text-description outline-0
 }
 .btn.accent {
   cursor: pointer;
-  @apply bg-accent text-text-on-accent disabled:bg-bg-disabled disabled:text-text-description
+  @apply bg-accent text-text-on-accent disabled:bg-bg-disabled disabled:text-text-description outline-0
 }
 .btn.cancel {
   cursor: pointer;
-  @apply bg-error text-text-on-accent disabled:bg-bg-disabled disabled:text-text-description
+  @apply bg-error text-text-on-accent disabled:bg-bg-disabled disabled:text-text-description outline-0
 }
 
 input {
   @apply px-3 py-1 text-text-primary rounded outline-outline outline-1 focus:outline-accent placeholder:text-text-description
+}
+
+select {
+  @apply p-1 text-text-primary rounded outline-outline outline-1 focus:outline-accent placeholder:text-text-description
+}
+
+option {
+  @apply p-1 text-text-primary bg-bg-secondary hover:text-text-on-accent hover:bg-accent active:text-text-on-accent active:bg-accent
 }

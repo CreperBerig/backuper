@@ -2,6 +2,8 @@ import { Outlet } from "react-router";
 import { SettingsHeader } from "../components/headers/SettingsHeader";
 import { SettingsSidebar } from "../components/sidebars/SettingsSidebar";
 import { SettingsFooterProvider, useSettingsFooter } from "../contexts/SettingsFooterContext";
+import { Suspense } from "react";
+import { SettingsSuspenseView } from "../components/suspenses/SettingsSuspenseView";
 
 function SettingsFooter() {
   const { changesCount, isDisabled, onSubmit, onCancel } = useSettingsFooter();
@@ -23,7 +25,9 @@ export function SettingsLayout() {
         <SettingsHeader className="col-span-2"/>
         <SettingsSidebar className="row-span-2"/>
         <main className="overflow-y-auto p-4">
-          <Outlet />
+          <Suspense fallback={<SettingsSuspenseView />}>
+            <Outlet />
+          </Suspense>
         </main>
         <SettingsFooter />
       </div>

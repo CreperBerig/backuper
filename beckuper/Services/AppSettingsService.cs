@@ -1,6 +1,5 @@
 ﻿using backuper.Models;
 using Synx;
-using System.Text.Json;
 
 namespace backuper.Services
 {
@@ -26,7 +25,7 @@ namespace backuper.Services
 
             var synx = await File.ReadAllTextAsync(_configPath);
             _logger.LogInformation("Config file read successfully from {ConfigPath}.", _configPath);
-            return JsonSerializer.Deserialize<AppSettingsData>(SynxFormat.ToJson(SynxFormat.Parse(synx))) ?? new AppSettingsData();
+            return SynxFormat.Deserialize<AppSettingsData>(synx) ?? new AppSettingsData();
         }
 
         public async Task UpdateAppSetings(AppSettingsData settings)
@@ -34,7 +33,7 @@ namespace backuper.Services
             var dir = Path.GetDirectoryName(_configPath);
             Directory.CreateDirectory(dir);
 
-            var synx = $"RetryCount {settings.RetryCount}\nRetryDelayMinutes {settings.RetryDelayMinutes}";
+            var synx = SynxFormat.Serialize(settings);
             await File.WriteAllTextAsync(_configPath, synx);
         }
     }

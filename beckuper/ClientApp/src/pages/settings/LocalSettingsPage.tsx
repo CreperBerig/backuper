@@ -26,10 +26,13 @@ export function LocalSettingsPage() {
     setChosenTheme(currentTheme)
   }, [currentTheme])
 
+  useEffect(() => {
+    document.title = 'Backuper | Local settings';
+  })
 
   return (
     <div className="space-y-2">
-      <div>
+      <div className="mb-4">
         <p className="text-xl font-semibold">Local</p>
         <p className="text-text-description">This settings for local web client application</p>
       </div>

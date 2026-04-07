@@ -1,0 +1,37 @@
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: beckuper-postgres-test
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpassword
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backuper:
+    build:
+      context: .
+      dockerfile: beckuper/Dockerfile
+    container_name: backuper-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - backuper-data:/app/data
+      - backuper-backups:/app/backups
+    environment:
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/backuper.db
+      - ConnectionStrings__Hangfire=/app/data/hangfire.db
+      - VolumePath=/app
+    depends_on:
+      - postgres-test
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  backuper-data:
+  backuper-backups:

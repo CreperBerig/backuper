@@ -8,11 +8,13 @@ namespace backuper.Services
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly AppSettingsService _appSettings;
+        private readonly IRecurringJobManager _recurringJobManager;
 
-        public SchedulerService(IServiceScopeFactory scopeFactory, AppSettingsService appSettings)
+        public SchedulerService(IServiceScopeFactory scopeFactory, AppSettingsService appSettings, IRecurringJobManager recurringJobManager)
         {
             _scopeFactory = scopeFactory;
             _appSettings = appSettings;
+            _recurringJobManager = recurringJobManager;
         }
 
         #region Scheduled Jobs
@@ -30,7 +32,7 @@ namespace backuper.Services
         {
             var jobId = GetJobId(db);
 
-            RecurringJob.AddOrUpdate(
+            _recurringJobManager.AddOrUpdate(
                 jobId,
                 () => RunBackupJobAsync(db.Id),
                 db.CronSchedule
@@ -39,7 +41,7 @@ namespace backuper.Services
 
         public void Unschedule(DatabaseConfig db)
         {
-            RecurringJob.RemoveIfExists(GetJobId(db));
+            _recurringJobManager.RemoveIfExists(GetJobId(db));
         }
         #endregion
 

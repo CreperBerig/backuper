@@ -2,7 +2,7 @@ import { HomeIcon, LoaderCircleIcon, PlusCircleIcon, SettingsIcon } from "lucide
 import { ROUTES } from "../../constants/routing";
 import { NavSidebarTile } from "../tiles/NavSidebarTile";
 import { useEffect, useState } from "react";
-import { type DatabaseConfigResponse } from "../../models/response/databaseConfig";
+import { type DatabaseConfigMinimalResponse } from "../../models/response/databaseConfig";
 import { fetchDatabaseConfig } from "../../api/databaseApi";
 import { AxiosError } from "axios";
 import { AddDatabaseConfigModal } from "../modals/AddDatabaseConfigModal";
@@ -11,7 +11,7 @@ export function MainSidebar() {
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [databases, setDatabases] = useState<DatabaseConfigResponse[]>([]);
+  const [databases, setDatabases] = useState<DatabaseConfigMinimalResponse[]>([]);
 
   useEffect(() => {
     fetchData()
@@ -19,7 +19,7 @@ export function MainSidebar() {
 
   const fetchData = async () => {
     try {
-      const data = await fetchDatabaseConfig.getAll();
+      const data = await fetchDatabaseConfig.getAllMinimal();
       setDatabases(data);
       console.log(data);
     } catch (error) {
@@ -52,8 +52,8 @@ export function MainSidebar() {
             <div>{error}</div>
           ) : databases.length > 0 ? (
             databases.map((database) => (
-              <div>
-                <NavSidebarTile to={ROUTES.dashboard(1)} title={database.name} key={database.id} />
+              <div key={database.id}>
+                <NavSidebarTile to={ROUTES.dashboard(database.id)} title={database.name}/>
               </div>
             )) 
           ) : (
@@ -63,7 +63,7 @@ export function MainSidebar() {
       </div>
 
       <div>
-        <button onClick={switchModal} className="rounded-lg flex gap-4 px-3 py-1.5 font-medium bg-bg-primary hover:bg-bg-secondary text-text-primary stroke-text-primary">
+        <button onClick={switchModal} className="rounded-lg w-full cursor-pointer flex gap-4 px-3 py-1.5 font-medium bg-bg-primary hover:bg-bg-secondary text-text-primary stroke-text-primary">
           <PlusCircleIcon />
           Add database
         </button>

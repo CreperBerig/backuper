@@ -9,12 +9,16 @@ namespace backuper.Services
     {
         public static async Task<bool> PostgreSQL(DatabaseConfig config)
         {
+            Console.WriteLine($"PostgreSQL config: {config.ToString()}");
             var pgConn = new NpgsqlConnection($"Host={config.Host};Port={config.Port};Database={config.DatabaseName};Username={config.Username};Password={config.Password};Timeout=5");
+            Console.WriteLine("Created PostgreSQL connection.");
             await using (pgConn)
             {
                 await pgConn.OpenAsync();
+                Console.WriteLine("PostgreSQL connection successful.");
                 return true;
             }
+            Console.WriteLine("PostgreSQL connection false.");
         }
 
         public static async Task<bool> MySQL(DatabaseConfig config)

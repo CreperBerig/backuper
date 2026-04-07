@@ -13,3 +13,8 @@ export type DatabaseConfigResponse = {
   retentionDays: string;
   cronSchedule: string;
 }
+
+export type DatabaseConfigMinimalResponse = {
+  id: number;
+  name: string;
+}
