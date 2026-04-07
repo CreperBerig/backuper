@@ -26,6 +26,12 @@ namespace backuper.Services
             var databases = await dbRepository.GetAll();
             foreach (var db in databases)
                 Schedule(db);
+
+            _recurringJobManager.AddOrUpdate(
+                "cleanup-old-backups",
+                () => CleanupOldBackupsAsync(),
+                _appSettings.GetAppSettingsData().Result.CleanupCron
+            );
         }
 
         public void Schedule(DatabaseConfig db)
@@ -96,6 +102,29 @@ namespace backuper.Services
             }
 
             return (false, string.Empty, lastError);
+        }
+
+        public async Task CleanupOldBackupsAsync()
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var dbRepository = scope.ServiceProvider.GetRequiredService<ICRUDRepository<DatabaseConfig>>();
+            var backupRepository = scope.ServiceProvider.GetRequiredService<BackupRepository>();
+            var backupService = scope.ServiceProvider.GetRequiredService<BackupService>();
+
+            var databases = await dbRepository.GetAll();
+
+            foreach (var db in databases)
+            {
+                var cutoff = DateTime.UtcNow.AddDays(-db.RetentionDays);
+                var old = await backupRepository.GetOlderThan(db.Id, cutoff);
+
+                foreach (var backup in old)
+                {
+                    backupService.DeleteFile(backup.FilePath);
+                    await backupRepository.DeleteById(backup.Id);
+                }
+            }
         }
         #endregion
 
