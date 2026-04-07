@@ -2,7 +2,7 @@
 
 A self-hosted database backup manager with a web UI. Supports scheduled and manual backups for PostgreSQL, MySQL, MSSQL, and SQLite databases.
 
-**Docker Hub:** [hub.docker.com/r/creperberig/backuper](https://hub.docker.com/r/creperberig/backuper)
+**Docker Hub:** [hub.docker.com/r/ren4el/backuper](https://hub.docker.com/r/ren4el/backuper)
 
 ## Features
 
